@@ -14,7 +14,7 @@ $db = mysqli_connect("p:commonswiki.labsdb", $ts_mycnf['user'], $ts_mycnf['passw
 unset($ts_mycnf, $ts_pw);
 
 $query = 'SELECT img_width, img_height, img_size FROM image WHERE img_name = "' . mysqli_real_escape_string($db, $file) . '"';
-echo $query."\n";
+// echo $query."\n";
 $res = mysqli_query($db, $query);
 $num = mysqli_num_rows($res);
 
