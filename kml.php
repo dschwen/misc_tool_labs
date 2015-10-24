@@ -14,7 +14,7 @@ $text = curl_exec($curl);
 $lines = explode( "\n", $text );
  
 foreach ($lines as $line_num => $line) {
-  $out1 = preg_replace( '/<[\/]{0,1}source[^>]*>/', '', $line );
+  $out1 = preg_replace( '/<[\/]{0,1}[Ss](ource|yntaxhighlight)[^>]*>/', '', $line );
   $out2 = preg_replace( '/^\s+$/', '', $out1 );
   if( $out2 != '' ) echo $out2 . "\n";
   if( $out2 == '</kml>' ) exit;
