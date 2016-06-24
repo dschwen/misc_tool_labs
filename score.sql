@@ -1,0 +1,2 @@
+CREATE TABLE tokens (token_id INTEGER NOT NULL AUTO_INCREMENT KEY, token_value CHAR(32) NOT NULL, token_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE votes (vote_value SET('up', 'down', '0', '1', '2', '3', '4', '5') NOT NULL, vote_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, vote_token_id INTEGER NOT NULL);
