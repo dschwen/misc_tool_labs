@@ -26,34 +26,59 @@ unset($ts_mycnf, $ts_pw);
 switch ($action)
 {
   case "token" :
-    // TODO: generate token and add into token table
-    echo '{"token": "POPEL"}';
-    break;
+    // generate token
+    $token = bin2hex(openssl_random_pseudo_bytes(16));
+    // add into token table
+    $sql = sprintf("INSERT INTO tokens (token_value) VALUES('%s')", mysqli_real_escape_string($db, $token));
+    $res = mysqli_query($db, $sql);
+    if ($res)
+      echo '{"token": "' . $token . '"}';
+    else
+      echo '{"error": "Failed to create token."}';
+    exit;
 
   case "vote" :
-    // search token in database
+    // get token
     if (array_key_exists('token', $_GET))
-      $action = $_GET['action'];
+      $token = $_GET['token'];
     else {
-      echo '{"error": "No action parameter supplied. ' . $valid_choices . '}';
+      echo '{"error": "No token supplied. Fetch one using \'action=token\'."}';
+      exit;
+    }
+
+    // get vote
+    if (array_key_exists('vote', $_GET))
+      $vote = strtolower($_GET['vote']);
+    else {
+      echo '{"error": "No vote supplied."}';
+      exit;
+    }
+    if (!in_array($vote, ['up', 'down', '0', '1', '2', '3', '4', '5']))
+    {
+      echo '{"error": "Invalid vote type."}';
       exit;
     }
 
     // check if token is valid otherwise return error
-    $sql = sprintf("SELECT token_date FROM tokens WHERE token_value = '%s'", mysqli_real_escape_string($db, $token));
+    $sql = sprintf("SELECT token_date, token_id FROM tokens WHERE token_value = '%s'", mysqli_real_escape_string($db, $token));
     $res = mysqli_query($db, $sql);
-
     if (mysqli_num_rows($res) != 1)
     {
-      echo '{ "error": "Database error (found ' . mysqli_num_rows($res) . ' results; should be 1)" }';
+      echo '{"error": "Invalid token."}';
       exit;
     }
-    $token_date = intval($row['token_date']);
     // TODO: check if token is expired
+    $token_date = $row['token_date'];
 
-    // TODO: register vote with time, token, and page_id
-    echo '{"success": "Vote counted."}';
-    break;
+    // register vote with time, token, and page_id
+    $token_id = intval($row['token_id']);
+    $sql = sprintf("INSERT INTO votes (vote_value, vote_token_id) VALUES('%s', %d)", $vote, $token_id);
+    $res = mysqli_query($db, $sql);
+    if ($res)
+      echo '{"success": "Vote counted."}';
+    else
+      echo '{"error": "Failed to register vote."}';
+    exit;
 
   default:
     echo '{"error": "Invalid action parameter supplied. ' . $valid_choices . '}';
