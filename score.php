@@ -6,7 +6,7 @@ header("Pragma: no-cache");
 header("Expires: 0");
 
 // used in multiple error messages
-$valid_choices = 'Valid choices are [\'token\', \'vote\']"'
+$valid_choices = 'Valid choices are [\'token\', \'vote\']"';
 
 // get action
 if (array_key_exists('action', $_GET))
