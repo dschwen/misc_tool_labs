@@ -53,7 +53,7 @@ switch ($action)
       echo '{"error": "No vote supplied."}';
       exit;
     }
-    if (!in_array($vote, ['up', 'down', '0', '1', '2', '3', '4', '5']))
+    if (!in_array($vote, array('up', 'down', '0', '1', '2', '3', '4', '5')))
     {
       echo '{"error": "Invalid vote type."}';
       exit;
@@ -68,6 +68,7 @@ switch ($action)
       exit;
     }
     // TODO: check if token is expired
+    $row = mysqli_fetch_array($res);
     $token_date = $row['token_date'];
 
     // register vote with time, token, and page_id
